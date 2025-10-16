@@ -1,0 +1,32 @@
+edition: 1.0.0
+name: ppt-mcp
+access: default
+vars:
+  region: cn-hangzhou
+services:
+  ppt-mcp:
+    component: fc
+    props:
+      region: ${vars.region}
+      service:
+        name: ppt-mcp-svc
+      function:
+        name: ppt-mcp-func
+        runtime: python3.9
+        handler: index.handler          # 占位，真实用 startCommand
+        memorySize: 512
+        timeout: 60
+        codeUri: ./
+        startCommand: python -m ppt_mcp  # ① 确保项目里有 __main__.py 或改入口
+        port: 9000                       # ② 必须 9000
+        environmentVariables:
+          PORT: 9000
+      triggers:
+        - name: http
+          type: http
+          config:
+            authType: anonymous
+            methods: [GET, POST]
+      customDomains:
+        - domainName: auto
+          protocol: HTTP
